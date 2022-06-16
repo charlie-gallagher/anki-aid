@@ -4,7 +4,12 @@
 import os
 import shutil
 from pathlib import Path
-from colorama import Fore,Style
+import sys
+# This non-sense because I haven't figured out how to get
+# from anki_cli import cli
+# to work
+sys.path.append('anki_cli')
+import cli
 
 GLOBALS = {'audio_dir': 'mp3', 'anki_dir': 'mp3/fake_anki'}
 
@@ -48,13 +53,12 @@ def cp_copy_new_mp3s(audio_dir, anki_dir):
     from_mp3s = [Path(audio_dir, x) for x in new_mp3s]
     to_dir = Path(anki_dir)
 
-    g_check = Fore.GREEN + '✓ ' + Style.RESET_ALL
-
     for x in from_mp3s:
         shutil.copy(x, to_dir)
-        b_file = Fore.BLUE + f'{x}' + Style.RESET_ALL
-        print(g_check + 'Writing ' + b_file + ' to Anki directory')
+        msg = f'Writing {cli.blue(str(x))} to Anki directory'
+        print(f'{cli.check(msg)}')
 
-    print(f'Successfully copied ' + Fore.BLUE + str(len(new_mp3s)) + Style.RESET_ALL + ' files')
+    msg = f'Successfully copied {cli.blue(str(len(new_mp3s)))} files to Anki'
+    print(cli.check(msg))
     return new_mp3s
 

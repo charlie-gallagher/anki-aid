@@ -7,6 +7,12 @@
 import requests
 import xml.etree.ElementTree as ET
 import pathlib
+# This non-sense because I haven't figured out how to get
+# from anki_cli import cli
+# to work
+import sys
+sys.path.append('anki_cli')
+import cli
 
 def get_raw_shtooka_xml(url):
     r = requests.get(url)
@@ -46,7 +52,7 @@ def build_shtooka_index(urls):
     d_list = list()
     # Generate list of dictionaries
     for url in urls:
-        print("Fetching index at " + url + "...")
+        print("Fetching index at " + cli.blue(url) + "...")
         xml_raw = get_raw_shtooka_xml(url)
         xml_proc = read_raw_shtooka_xml(xml_raw)
         d_list.append(extract_shtooka_paths(xml_proc))
@@ -73,7 +79,7 @@ def sh_get_audio(word, lookup, path = 'mp3'):
           filename is automatically generated)
     """
     if not word in lookup:
-        print(f'❌ {word} not found on Shtooka')
+        print(cli.fail(f'{word} not found on Shtooka'))
         return False
 
     url = lookup[word]
@@ -81,7 +87,7 @@ def sh_get_audio(word, lookup, path = 'mp3'):
     r.raise_for_status()
 
     filename = sh_make_filename(path, word)
-    print("✅ Writing " + str(filename))
+    print(cli.check(f'Writing {cli.blue(str(filename))}'))
 
     with open(filename, 'wb') as f:
         f.write(r.content)

@@ -3,7 +3,12 @@ import os
 import requests
 import urllib
 import pathlib
-from colorama import Fore,Style
+# This non-sense because I haven't figured out how to get
+# from anki_cli import cli
+# to work
+import sys
+sys.path.append('anki_cli')
+import cli
 
 def fv_get_api_key(file):
     with open(file, 'r') as f:
@@ -15,10 +20,6 @@ def fv_get_api_key(file):
 GLOBAL = {
     'API_KEY': fv_get_api_key(os.path.expanduser('~/forvo-key.txt'))
 }
-
-
-def blue_text(s):
-    return f'{Fore.BLUE}{s}{Style.RESET_ALL}'
 
 
 
@@ -84,9 +85,7 @@ def fv_retrieve_audio(url, path):
     mp3.raise_for_status()
 
     # Pretty printing stuff
-    g_check = Fore.GREEN + '✓ ' + Style.RESET_ALL
-    pretty_path = blue_text(path)
-    print(f'{g_check}Writing to {pretty_path}')
+    print(cli.check(f'Writing to {cli.blue(str(path))}'))
 
     # Write to disk
     with open(path, 'wb') as f:
@@ -122,9 +121,9 @@ def fv_get_czech_audio(key, wordlist, audio_dir = 'mp3', preferred_users = ['Zab
     """
     successes = list()
     for word in wordlist:
-        print(f'Searching Forvo for {blue_text(word)}')
+        print(f'Searching Forvo for {cli.blue(word)}')
         audio = fv_get_audio_list(key = key, word = word)
-        print(f'Found {blue_text(str(len(audio["items"])))} recordings')
+        print(f'Found {cli.blue(str(len(audio["items"])))} recordings')
 
         if (len(audio['items']) == 0):
             print('No recordings found!')
@@ -143,5 +142,5 @@ def fv_get_czech_audio(key, wordlist, audio_dir = 'mp3', preferred_users = ['Zab
         successes.append(word)
         
 
-    print(f'Successfully found {len(successes)} words')
+    print(f'Successfully found {cli.blue(str(len(successes)))} words')
     return wordlist
