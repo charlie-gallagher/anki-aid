@@ -1,3 +1,4 @@
 *.mp3
 env/
 __pycache__/
+index.json
