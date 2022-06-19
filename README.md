@@ -1,5 +1,5 @@
 # Download Audio for Anki Flashcards
-Let me be specific -- this is exclusively for the Czech language. Maybe some
+Let me be clear -- this is exclusively for the Czech language. Maybe some
 time I'll generalize this, but for now, it's just Czech. Really, this is just a
 tool to make my life easier, and to work on my Python skills.
 
@@ -54,6 +54,7 @@ Broadly, two steps:
 For parsing XML, it looks like `xml.etree.ElementTree` is the standard library
 module that gets recommended the most. I also wonder if I'd be able to use
 `BeautifulSoup` instead. Not sure.
+
 
 
 

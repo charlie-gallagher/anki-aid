@@ -17,6 +17,11 @@ GLOBAL = {
 }
 
 
+def fv_make_filename(path, word):
+    word_clean = word.replace(' ', '_')
+    word_filename = f'pronunciation_cs_{word_clean}.mp3'
+    return pathlib.PurePath(path, word_filename)
+
 
 def fv_path_param(params):
     """
@@ -133,7 +138,7 @@ def fv_get_czech_audio(key, wordlist, audio_dir = 'mp3', preferred_users = ['Zab
             mp3 = priority_mp3
 
         print('Downloading audio...')
-        fv_retrieve_audio(mp3, pathlib.Path(audio_dir, f'pronunciation_cs_{word}.mp3'))
+        fv_retrieve_audio(mp3, fv_make_filename(audio_dir, word))
         successes.append(word)
         
 
