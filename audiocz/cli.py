@@ -7,31 +7,31 @@ GLOBAL = {
 }
 
 def blue(x):
-    if type(x) is not str:
+    if not isinstance(x, str):
         raise TypeError
     return f'{Fore.BLUE}{x}{Style.RESET_ALL}'
 
 
 def red(x):
-    if type(x) is not str:
+    if not isinstance(x, str):
         raise TypeError
     return f'{Fore.RED}{x}{Style.RESET_ALL}'
 
 
 def check(x):
-    if type(x) is not str:
+    if not isinstance(x, str):
         raise TypeError
     return f'{Fore.GREEN}{GLOBAL["check"]}{Style.RESET_ALL} {x}'
 
 
 def fail(x):
-    if type(x) is not str:
+    if not isinstance(x, str):
         raise TypeError
     return f'{Fore.RED}{GLOBAL["x"]}{Style.RESET_ALL} {x}'
 
 
 def h1(x, width = 80):
-    if type(x) is not str:
+    if not isinstance(x, str):
         raise TypeError
     len_x = len(x)
     prefix_len = 4
