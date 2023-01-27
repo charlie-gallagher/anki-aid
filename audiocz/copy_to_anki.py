@@ -1,12 +1,17 @@
-# Utilities for copying files to Anki `collection.media` directory
-# I'm not sure how I'll incorporate the (system-dependent) Anki
-# media directory
+# Utilities for copying files to Anki `collection.media` directory I'm not sure
+# how I'll incorporate the (system-dependent) Anki media directory
 import os
 import shutil
 from pathlib import Path
-from . import cli
+# Enable testing using main function
+if __name__=='__main__':
+    import cli
+else:
+    from . import cli
+
 
 GLOBALS = {'audio_dir': 'mp3', 'anki_dir': 'mp3/fake_anki'}
+
 
 ANKI_DIR = Path(
     os.path.expanduser('~'),
@@ -17,14 +22,13 @@ ANKI_DIR = Path(
     'collection.media'
 )
 
-# Take all of the files in `audio_dir` and copy them 
-# into `anki_dir`. Don't copy files that exist in the
-# target location. Report which files will be copied
-# and their copy status.
 
-# There's a warning on shutil that not all attributes are
-# copied, such as the file owner and group. I'll do some
-# experiments.
+# Take all of the files in `audio_dir` and copy them into `anki_dir`. Don't
+# copy files that exist in the target location. Report which files will be
+# copied and their copy status.
+
+# There's a warning on shutil that not all attributes are copied, such as the
+# file owner and group. I'll do some experiments.
 
 def cp_get_new_mp3_names(audio_dir, anki_dir):
     """
@@ -56,4 +60,12 @@ def cp_copy_new_mp3s(audio_dir, anki_dir):
     msg = f'Successfully copied {cli.blue(str(len(new_mp3s)))} files to Anki'
     print(cli.check(msg))
     return new_mp3s
+
+if __name__=='__main__':
+    # For one test, clear out mp3/fake_anki directory first
+    print(GLOBALS)
+    print(ANKI_DIR)
+    print(cp_get_new_mp3_names(GLOBALS['audio_dir'], GLOBALS['anki_dir']))
+    cp_copy_new_mp3s(GLOBALS['audio_dir'], GLOBALS['anki_dir'])
+    print(cp_get_new_mp3_names(GLOBALS['audio_dir'], GLOBALS['anki_dir']))
 
