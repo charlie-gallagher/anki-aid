@@ -6,24 +6,23 @@ import pathlib
 # Enable testing using main function
 if __name__=='__main__':
     import cli
+    from wordlist import Wordlist
 else:
     from . import cli
+    from .wordlist import Wordlist
 
+
+def get_api_key(api_key_file):
+    with open(os.path.expanduser(api_key_file), 'r') as f:
+        key = f.readline().rstrip()
+    return key
 
 
 class ForvoRequest:
     def __init__(self, key_file, word):
-        self.key_file = os.path.expanduser(key_file)
-        self.key = self._get_api_key()
+        self.key = get_api_key(key_file)
         self.word = word
 
-    
-    def _get_api_key(self):
-        with open(self.key_file, 'r') as f:
-            key = f.readline().rstrip()
-        return key
-
-    
     def build_pronounce_request(self, language = 'cs', order = 'rate-desc', **args):
         url = 'https://apifree.forvo.com'
         params = params_to_path({
@@ -87,12 +86,13 @@ class ForvoResponse:
     @param resp The API response containing the audio files
     """
     def __init__(self, word, resp):
+        self.n_results = None
+        self.word = word
+        self.responses = []
         self._parse_resp(word=word, resp=resp)
 
     def _parse_resp(self, word, resp):
-        self.n_responses = resp['attributes']['total']
-        self.word = word
-        self.responses = []
+        self.n_results = resp['attributes']['total']
         for x in resp['items']:
             self.responses.append(ForvoResponseItem(x))
 
@@ -134,13 +134,64 @@ def make_filename(path, word):
     return pathlib.PurePath(path, word_filename)
 
 
+class ForvoWordlist(Wordlist):
+    """A Wordlist subclass with methods for searching Forvo
+
+    @param wordlist An iterable containing the words to search for
+    @param api_key_file The file that contains the API key
+    @param download_dir The directory into which files get downloaded
+    """
+    def __init__(self, wordlist, api_key_file, download_dir):
+        self.wordlist = wordlist
+        self.api_key_file = api_key_file
+        self.api_key = get_api_key(api_key_file)
+        self.download_dir = download_dir
+        self.successes = []
+        self.failures = []
+
+    def search_forvo(self):
+        self.responses = self._search_forvo()
+        self.successes = [x for x in self.responses if x.n_results > 0]
+        self.failures = [x for x in self.responses if x.n_results == 0]
+        self.summarize_responses()
+
+    def _search_forvo(self):
+        out = []
+        for word in self.wordlist:
+            print(f'Searching for {cli.blue(word)}...', end='', flush=True)
+            fv = ForvoRequest(key_file=self.api_key_file, word=word)
+            resp = ForvoResponse(word=word, resp=fv.get_audio_list())
+            out.append(resp)
+            print('Done')
+        return out
+
+    def summarize_responses(self):
+        print(cli.h1('Successful downloads'))
+        if len(self.successes) == 0:
+            print(cli.fail('No successful downloads'))
+        else:
+            for word_resp in self.successes:
+                print(cli.check(word_resp.word))
+        print(cli.h1('Failed to download'))
+        if len(self.failures) == 0:
+            print(cli.fail('No failures'))
+        else:
+            for word_resp in self.failures:
+                print(cli.fail(word_resp.word))
+
+    def download(self):
+        print(cli.h1('Starting downloads'))
+        for resp in self.successes:
+            # This already does pretty printing
+            resp.download(self.download_dir)
+
+
+
 
 if __name__=='__main__':
     print("Object creation works")
     key_file = "~/forvo-key.txt"
     fv = ForvoRequest(key_file = key_file, word = 'dobrý')
-    print("Print key file")
-    print(fv.key_file)
     
     print("Read API key")
     print(fv.key)
@@ -152,7 +203,7 @@ if __name__=='__main__':
     print("Test ForvoResponse")
     fv_res = ForvoResponse(word='dobrý', resp=res)
     print(fv_res)
-    print(f'Length: {fv_res.n_responses}')
+    print(f'Length: {fv_res.n_results}')
     print("Find username")
     print(fv_res.filter_by_username(('kunk', 'Mili_CZ')))
     print(fv_res.filter_by_username('not a username'))
@@ -162,4 +213,25 @@ if __name__=='__main__':
 
     print("Formatted for anki")
     print(fv_res.format_anki_reference())
+
+    print("A whole wordlist")
+    words = [
+                'dobrý',
+                'den',
+                'jak',
+                'se',
+                'máš',
+            ]
+
+    print("Create wordlist")
+    wordlist = ForvoWordlist(
+            wordlist = words,
+            api_key_file = '~/forvo-key.txt',
+            download_dir = 'mp3'
+        )
+    print("Get results")
+    wordlist.search_forvo()
+    print("Download results")
+    wordlist.download()
+
 
