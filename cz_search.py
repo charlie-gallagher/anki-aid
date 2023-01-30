@@ -14,7 +14,7 @@ if __name__ == "__main__":
         )
     wordlist.search()
     wordlist.download()
-    wordlist.
+    wordlist.format_anki_references()
     copy_to_anki.cp_copy_new_mp3s(
         audio_dir='mp3',
         anki_dir='mp3/fake_anki'
