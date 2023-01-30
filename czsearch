@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+import sys
+import argparse
+from audiocz import cli
+from audiocz import copy_to_anki
+from audiocz import forvo
+
+
+def init_argparse():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('wordlist', help='Text file containing wordlist')
+    parser.add_argument('-o', '--output', help='File to write output Anki references to')
+    return parser
+
+
+def read_wordlist(fname):
+    with open('data/wordlist.txt', 'r') as f:
+        wordlist = [x.rstrip() for x in f]
+    return wordlist
+
+
+
+if __name__ == "__main__":
+    parser = init_argparse()
+    args = parser.parse_args()
+
+    wordlist_file = args.wordlist
+    wordlist = read_wordlist(wordlist_file)
+    
+    print(cli.h1('Searching Forvo'))
+    wordlist = forvo.ForvoWordlist(
+            wordlist = wordlist,
+            api_key_file = '~/forvo-key.txt',
+            download_dir = 'mp3'
+        )
+    wordlist.search()
+    wordlist.download()
+    wordlist.format_anki_references(output=args.output)
+    copy_to_anki.cp_copy_new_mp3s(
+        audio_dir='mp3',
+        anki_dir='mp3/fake_anki'
+    )
+
