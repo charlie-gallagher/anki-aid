@@ -188,9 +188,13 @@ class ForvoWordlist(Wordlist):
             # This already does pretty printing
             resp.download(self.download_dir)
 
-    def format_anki_references(self):
-        for resp in self.successes:
-            print(resp.format_anki_reference())
+    def format_anki_references(self, output=None):
+        if output is None:
+            for resp in self.successes:
+                print(resp.format_anki_reference())
+        else:
+            with open(output, 'w') as f:
+                f.write('\n'.join([resp.format_anki_reference() for resp in self.successes]))
 
 
 
@@ -240,6 +244,7 @@ if __name__=='__main__':
     wordlist.search()
     print("Download results")
     wordlist.download()
-    wordlist.format_anki_reference()
+    wordlist.format_anki_references()
+    wordlist.format_anki_references(output='scratch-output.txt')
 
 
