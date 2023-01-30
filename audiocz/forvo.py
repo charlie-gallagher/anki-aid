@@ -188,7 +188,7 @@ class ForvoWordlist(Wordlist):
             # This already does pretty printing
             resp.download(self.download_dir)
 
-    def format_anki_reference(self):
+    def format_anki_references(self):
         for resp in self.successes:
             print(resp.format_anki_reference())
 
