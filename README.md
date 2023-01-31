@@ -15,6 +15,11 @@ Install the requirements.
 pip3 install -r requirements.txt
 ```
 
+You will also need some library to do audio processing (not required if you
+don't use the `normalize_audio` module). For example, `ffmpeg`. **I recommend
+normalizing the audio files** that are returned from Forvo, because they can
+be extremely quiet.
+
 ## audiocz
 The primary module is `audiocz`, which contains sub-modules:
 
@@ -23,6 +28,8 @@ The primary module is `audiocz`, which contains sub-modules:
 - `forvo` (recently superseded by `forvo_class`) Tools for downloading from
   Forvo
 - `shtooka` same as `forvo` but for `shtooka.org`
+- `normalize_audio`, for normalizing (raising the volume to a consistent level)
+  audio.
 - and `wordlist`, which contains an empty abstract `Wordlist` class that I'll
   flesh out at some point.
 
