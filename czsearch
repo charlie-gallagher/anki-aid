@@ -4,6 +4,7 @@ import argparse
 from audiocz import cli
 from audiocz import copy_to_anki
 from audiocz import forvo
+from audiocz import normalize_audio
 
 
 def init_argparse():
@@ -36,6 +37,9 @@ if __name__ == "__main__":
     wordlist.search()
     wordlist.download()
     wordlist.format_anki_references(output=args.output)
+    success_files = [str(x.filename) for x in wordlist.successes]
+    for f in success_files:
+        normalize_audio.normalize(f)
     copy_to_anki.cp_copy_new_mp3s(
         audio_dir='mp3',
         anki_dir='mp3/fake_anki'
