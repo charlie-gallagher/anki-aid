@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "audiocz"
+version = "0.0.1"
+description = """\
+audicz assists the downloading of Czech audio examples for \
+words given in a wordlist. It also has utilities for adding those words to \
+the Anki media folder."""
+readme = "README.md"
+requires-python = ">3.7"
+license = "MIT"
+dependencies = [
+	"certifi>=2022.5",
+	"charset-normalizer>=2.0",
+	"colorama>=0.4.4",
+	"pydub==0.25.1",
+	"idna>=3.3",
+	"requests>=2.28",
+	"urllib3>=1.26",
+]
