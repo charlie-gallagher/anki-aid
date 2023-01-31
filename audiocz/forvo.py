@@ -90,6 +90,7 @@ class ForvoResponse:
         self.n_results = None
         self.word = word
         self.responses = []
+        self.filename = None
         self._parse_resp(word=word, resp=resp)
 
     def _parse_resp(self, word, resp):
@@ -106,8 +107,8 @@ class ForvoResponse:
             url = self._choose_url(user_sublist)
         else:
             url = self._choose_url(self.responses)
-        target_path = make_filename(target_dir, self.word)
-        return self._download_item(url, target_path)
+        self.filename = make_filename(target_dir, self.word)
+        return self._download_item(url, self.filename)
 
     @staticmethod
     def _choose_url(responses):
